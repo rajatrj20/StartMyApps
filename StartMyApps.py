@@ -23,7 +23,7 @@ class MyFirstGUI:
         frame1.grid(row=0, column=0)
         frame1.grid_propagate(0)
 
-        image = Image.open("includes/logo.png")
+        image = Image.open("images/logo.png")
         image = image.resize((100,100))
         photo = ImageTk.PhotoImage(image)
 
