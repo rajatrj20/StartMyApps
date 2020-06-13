@@ -7,18 +7,21 @@ import tkinter.ttk as ttk
 class MyFirstGUI:
     def __init__(self, master):
         ttk.Style().theme_use('vista')
+        
         self.master = master
-        self.master.geometry("500x450")
-        self.master.resizable(0, 0)
-        master.title("StartMyApps")
         self.addedApps = {}
         self.saveFileFormat = [('Batch Files', '*.bat'),  
              ('Shell Files', '*.sh')] 
         self.validInputFileFormat = [("Executable Files","*.exe")]
 
+        self.master.geometry("500x450")
+        self.master.resizable(0, 0)
+        self.master.title("StartMyApps")
+
         #Top Panel
         frame1 = Frame(master, height=100, width=300)
         frame1.grid(row=0, column=0)
+        frame1.grid_propagate(0)
 
         image = Image.open("includes/logo.png")
         image = image.resize((100,100))
@@ -32,8 +35,6 @@ class MyFirstGUI:
         var.set("""Welcome to StartMyApps. One click solution to kick start your work enviornment.""")
         self.infoHeader = Message(frame1, textvariable=var, width=190)
         self.infoHeader.grid(row=0, column=1, sticky="E")
-
-        frame1.grid_propagate(0)
         
         #Left Sidebar
         frame2 = Frame(master, height=100, width=200)
@@ -41,23 +42,22 @@ class MyFirstGUI:
         frame2.grid_rowconfigure(0, weight=1)
         frame2.grid_rowconfigure(1, weight=1)
         frame2.grid_columnconfigure(0, weight=1)
-
+        frame2.grid_propagate(0)
+        
         self.labelAddApp = ttk.Label(frame2, text="Find your apps here:")
         self.fileBoxButton = ttk.Button(frame2, text="Add", command=self.addNewApp)
         self.labelAddApp.grid(row=0, column=0, sticky='S')
         self.fileBoxButton.grid(row=1, column=0)
-
-        frame2.grid_propagate(0)
         
         #Right Sidebar
         frame3 = Frame(master, height=273, highlightbackground="black", highlightthickness=1)
         frame3.grid(row=1, columnspan=2, sticky='nsew')
+        frame3.grid_columnconfigure(0, weight=1)
+        frame3.grid_columnconfigure(1, weight=1)
         frame3.grid_propagate(0)
 
         self.listLabel = ttk.Label(frame3, text="Select Apps:", anchor='w')
         self.listLabel.grid(row=0, column=0, sticky='W')
-        frame3.grid_columnconfigure(0, weight=1)
-        frame3.grid_columnconfigure(1, weight=1)
 
         self.removeButton = ttk.Button(frame3, text="Remove App", command=self.removeApp)
         self.removeButton.grid(row=0, column=1, sticky='E')
@@ -68,10 +68,10 @@ class MyFirstGUI:
         #Bottom Panel
         frame4 = Frame(master, height=70)
         frame4.grid(row=3, columnspan=2, sticky='nsew')
-        frame4.grid_propagate(0)
         frame4.grid_rowconfigure(0, weight=1)
         frame4.grid_rowconfigure(1, weight=1)
         frame4.grid_columnconfigure(0, weight=1)
+        frame4.grid_propagate(0)
         
         self.saveFileButton = ttk.Button(frame4, text="Generate Launcher", command=self.generateLauncher)
         self.saveFileButton.grid(row=0, column=0, sticky='NE')
@@ -119,11 +119,7 @@ class MyFirstGUI:
         self.addedApps.clear()
         self.listBox.delete(0, self.listBox.size())
 
-def resource_path(relative_path):
-     if hasattr(sys, '_MEIPASS'):
-         return os.path.join(sys._MEIPASS, relative_path)
-     return os.path.join(os.path.abspath("."), relative_path)
-
-root = Tk()
-my_gui = MyFirstGUI(root)
-root.mainloop()
+if __name__ == "__main__":
+    root = Tk()
+    my_gui = MyFirstGUI(root)
+    root.mainloop()
