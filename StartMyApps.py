@@ -111,8 +111,9 @@ class MyFirstGUI:
         					.replace('"', ''))
         	if len(existingApps):
         		for appName in existingApps:
-        			self.listBox.insert('end', appName)
-        			self.addedApps.update({appName : self.listBox.size()})
+        			if appName not in self.addedApps:
+        				self.listBox.insert('end', appName)
+        				self.addedApps.update({appName : self.listBox.size()})
         	else:
         		self.saveFileProgressLabel.grid()
         		self.saveFileProgressVar.set("No apps found in launcher file, please check the file")
