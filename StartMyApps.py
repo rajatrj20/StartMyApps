@@ -10,9 +10,9 @@ class MyFirstGUI:
         
         self.master = master
         self.addedApps = {}
-        self.saveFileFormat = [('Batch Files', '*.bat'),  
+        self.launcherFileFormat = [('Batch Files', '*.bat'),  
              ('Shell Files', '*.sh')] 
-        self.validInputFileFormat = [("Executable Files","*.exe")]
+        self.validInputFileFormat = [("All Files","*")]
 
         self.master.geometry("500x450")
         self.master.resizable(0, 0)
@@ -52,18 +52,22 @@ class MyFirstGUI:
         #Right Sidebar
         frame3 = Frame(master, height=273, highlightbackground="black", highlightthickness=1)
         frame3.grid(row=1, columnspan=2, sticky='nsew')
-        frame3.grid_columnconfigure(0, weight=1)
-        frame3.grid_columnconfigure(1, weight=1)
+        frame3.grid_columnconfigure(0, weight=10)
+        frame3.grid_columnconfigure(1, weight=10)
+        frame3.grid_columnconfigure(2, weight=1)
         frame3.grid_propagate(0)
 
         self.listLabel = ttk.Label(frame3, text="Select Apps:", anchor='w')
         self.listLabel.grid(row=0, column=0, sticky='W')
 
+        self.openButton = ttk.Button(frame3, text="Edit Existing Launcher", command=self.openLauncher)
+        self.openButton.grid(row=0, column=1, sticky='E')
+
         self.removeButton = ttk.Button(frame3, text="Remove App", command=self.removeApp)
-        self.removeButton.grid(row=0, column=1, sticky='E')
+        self.removeButton.grid(row=0, column=2, sticky='E')
 
         self.listBox = Listbox(frame3, selectmode='SINGLE', height=15)
-        self.listBox.grid(row=1, columnspan=2, sticky='WE')
+        self.listBox.grid(row=1, columnspan=3, sticky='WE')
 
         #Bottom Panel
         frame4 = Frame(master, height=70)
@@ -89,11 +93,29 @@ class MyFirstGUI:
         self.addedApps.update({appName : self.listBox.size()})
 
     def removeApp(self):
-        if(self.listBox.curselection() is None):
+        if(self.listBox.curselection() is None or len(self.listBox.curselection()) == 0):
             return
         currentSelectedApp = self.listBox.get(self.listBox.curselection())
         self.listBox.delete(self.listBox.curselection())
         del self.addedApps[currentSelectedApp]
+
+    def openLauncher(self):
+        launcherFile = filedialog.askopenfilename(filetypes = self.launcherFileFormat)
+        if launcherFile:
+        	existingApps = []
+        	with open(launcherFile, "r") as file:
+        		for line in file:
+        			if line.startswith('start "" '):
+        				existingApps.append(line.strip()
+        					.replace('start "" ', '')
+        					.replace('"', ''))
+        	if len(existingApps):
+        		for appName in existingApps:
+        			self.listBox.insert('end', appName)
+        			self.addedApps.update({appName : self.listBox.size()})
+        	else:
+        		self.saveFileProgressLabel.grid()
+        		self.saveFileProgressVar.set("No apps found in launcher file, please check the file")
       
     def generateLauncher(self):
         self.saveFileProgressLabel.grid()
@@ -106,7 +128,7 @@ class MyFirstGUI:
             file_str.write('start "" ')
             file_str.write('"'+ line +'"\n')
         self.saveFileProgressVar.set("Please select location to save file...")
-        file = filedialog.asksaveasfile(filetypes = self.saveFileFormat, defaultextension = self.saveFileFormat) 
+        file = filedialog.asksaveasfile(filetypes = self.launcherFileFormat, defaultextension = self.launcherFileFormat) 
         if file:
             file.write(file_str.getvalue())
             file.close()
